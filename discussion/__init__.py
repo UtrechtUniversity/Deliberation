@@ -1,5 +1,8 @@
 from otree.api import *
 
+from settings import (
+    GROUP_SIZE as group_size,)
+
 doc = """
 3. Form a group
 4. Show one (random) statement + group members' opinions and motivations
@@ -10,7 +13,7 @@ doc = """
 
 class Constants(BaseConstants):
     name_in_url = 'discussion'
-    players_per_group = 3
+    players_per_group = group_size
     num_rounds = 1
 
 class Subsession(BaseSubsession):
@@ -45,7 +48,14 @@ for i in range(1, Constants.players_per_group):
 class GroupFormationPage(WaitPage):
     group_by_arrival_time = True
 
+    @staticmethod #save group id to carry forward to the chatroom
+    def after_all_players_arrive(group: Group):
+        for p in group.get_players():
+            p.participant.past_group_id = group.id
+
+
 class GroupOverview(Page):
+
     @staticmethod
     def vars_for_template(player: Player):
         statement = player.participant.vars.get("statement", "")
@@ -142,4 +152,5 @@ class NominatePartner(Page):
     def before_next_page(player: Player, timeout_happened):
         player.participant.vars["nominated_discussion_partner"] = player.nominated_discussion_partner
 
+#page_sequence = [GroupFormationPage, GroupOverview]
 page_sequence = [GroupFormationPage, GroupOverview, EvaluateGroup, UpdateOpinion, NominatePartner]
