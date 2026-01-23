@@ -4,7 +4,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
   @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
-  body { font-family: 'Montserrat', sans-serif; }
+  body { font-family: 'Montserrat', sans-serif'; }
 
   .motivation-text {
     font-size: 0.85rem;
@@ -25,7 +25,7 @@
 <div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
   <i class="fas fa-comments me-3 text-primary" style="font-size:1.6rem;"></i>
   <div>
-    <div class="text-muted small">Step 6</div>
+    <div class="text-muted small">Step 7</div>
     <h4 class="mb-0 fw-semibold">Nominate a discussion partner</h4>
   </div>
 </div>
@@ -49,27 +49,25 @@
   </div>
 </div>
 
-
 <div class="card mb-4 shadow-sm">
   <div class="card-body p-0">
     <table class="table table-striped mb-0">
       <thead class="table-light">
         <tr>
           <th style="width: 120px;" class="center-cell">
-            <i class="fas fa-check-circle me-2 text-muted"></i>
-            Select
+            <i class="fas fa-check-circle me-1 text-muted"></i> Select
           </th>
-          <th style="width: 160px;">
-            <i class="fas fa-user me-2 text-muted"></i>
-            Participant
+          <th style="width: 140px; white-space: nowrap;">
+            <i class="fas fa-user me-1 text-muted"></i> Participant
           </th>
-          <th style="width: 140px;">
-            <i class="fas fa-sliders-h me-2 text-muted"></i>
-            Opinion
+          <th style="width: 100px; white-space: nowrap;">
+            <i class="fas fa-venus-mars me-1 text-muted"></i> Gender
           </th>
-          <th>
-            <i class="fas fa-pen-nib me-2 text-muted"></i>
-            Motivation
+          <th style="width: 120px; white-space: nowrap;">
+            <i class="fas fa-sliders-h me-1 text-muted"></i> Opinion
+          </th>
+          <th style="white-space: nowrap;">
+            <i class="fas fa-pen-nib me-1 text-muted"></i> Motivation
           </th>
         </tr>
       </thead>
@@ -88,10 +86,12 @@
             <strong>{{ o.label }}</strong>
           </td>
           <td class="center-cell">
+            <span class="badge bg-light text-dark">{{ o.gender }}</span>
+          </td>
+          <td class="center-cell">
             <span class="badge bg-secondary">{{ o.opinion }}</span>
           </td>
-          <td class="motivation-text" style="white-space: pre-wrap;">{{ o.motivation }}
-          </td>
+          <td class="motivation-text" style="white-space: pre-wrap;">{{ o.motivation }}</td>
         </tr>
         {% endfor %}
       </tbody>

@@ -40,7 +40,7 @@
 <div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
   <i class="fas fa-star me-3 text-primary" style="font-size:1.6rem;"></i>
   <div>
-    <div class="text-muted small">Step 4</div>
+    <div class="text-muted small">Step 5</div>
     <h4 class="mb-0 fw-semibold">Evaluate group members</h4>
   </div>
 </div>
@@ -71,8 +71,12 @@
       <div class="mb-3 d-block bg-light p-2 rounded">
         <strong>{{ r.who }}</strong>
         <div class="text-muted small mt-1">
+          Gender: <span class="badge bg-secondary">{{ r.gender }}</span>
+        </div>
+        <div class="text-muted small mt-1">
           Opinion: <span class="badge bg-secondary">{{ r.opinion }}</span>
         </div>
+
         <div class="text-muted small mt-1" style="white-space: pre-wrap;">Motivation: {{ r.motivation }}
         </div>
       </div>

@@ -64,6 +64,7 @@ class GroupOverview(Page):
             "who": "You",
             "opinion": player.participant.vars.get("opinion", ""),
             "motivation": player.participant.vars.get("motivation", ""),
+            "gender": player.participant.vars.get("gender", "—"),
         }]
 
         for i, other in enumerate(player.get_others_in_group(), start=1):
@@ -71,6 +72,7 @@ class GroupOverview(Page):
                 "who": f"Group member {i}",
                 "opinion": other.participant.vars.get("opinion", ""),
                 "motivation": other.participant.vars.get("motivation", ""),
+                "gender": other.participant.vars.get("gender", "—"),
             })
 
         return dict(statement=statement, rows=rows)
@@ -93,6 +95,7 @@ class EvaluateGroup(Page):
                 "who": f"Group member {i}",
                 "opinion": other.participant.vars.get("opinion", ""),
                 "motivation": other.participant.vars.get("motivation", ""),
+                "gender": other.participant.vars.get("gender", "—"),
             })
 
         return dict(
@@ -130,6 +133,7 @@ class NominatePartner(Page):
                 label=f"Group member {p.id_in_group}",
                 opinion=p.participant.vars.get("opinion", ""),
                 motivation=p.participant.vars.get("motivation", ""),
+                gender=p.participant.vars.get("gender", "—")
             )
             for p in others
         ]
