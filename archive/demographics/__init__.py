@@ -22,9 +22,9 @@ class Player(BasePlayer):
 
     gender = models.StringField(
         choices=[
-            "Female",
-            "Male",
-            "Other"
+            "Woman",
+            "Man",
+            "X / other"
         ],
         widget=widgets.RadioSelect,
         label="What is your gender?"

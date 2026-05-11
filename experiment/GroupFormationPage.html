@@ -1,0 +1,40 @@
+{% extends "otree/WaitPage.html" %}
+{% load otree %}
+
+{% block content %}
+
+<p>Waiting for other participants to join...</p>
+
+<div style="background:#eee; width:300px; border-radius:5px; overflow:hidden;">
+  <div style="background:#4caf50; width:{{ percent }}%; height:20px;"></div>
+</div>
+
+<p>{{ percent }}% complete</p>
+
+<p id="refresh-msg" style="margin-top: 10px; font-style: italic; color: gray;">
+    Refreshing in <span id="countdown">10</span> seconds...
+</p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let seconds = 10;
+const countdownEl = document.getElementById("countdown");
+
+function tick() {
+    seconds--;
+    if (countdownEl) {
+        countdownEl.textContent = seconds;
+    }
+
+    if (seconds <= 0) {
+        window.location.reload();
+    } else {
+        setTimeout(tick, 1000);
+    }
+}
+
+setTimeout(tick, 1000);
+</script>
+{% endblock %}

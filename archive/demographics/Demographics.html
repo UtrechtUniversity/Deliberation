@@ -1,0 +1,73 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .statement-label {
+    font-size: 0.85rem;
+    line-height: 1.35;
+    padding: 0.75rem;
+  }
+
+  .statement-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .otree-form input[type="radio"] {
+    margin-right: 0.5rem;
+  }
+
+  .otree-form label {
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+  <i class="fas fa-user me-3 text-primary" style="font-size:1.6rem;"></i>
+  <div>
+    <div class="text-muted small">Step 1</div>
+    <h4 class="mb-0 fw-semibold">About you</h4>
+  </div>
+</div>
+
+<p>
+  Please answer the following questions.
+</p>
+
+
+  {% for field in form %}
+    <div class="card shadow-sm statement-card">
+      <div class="card-body">
+
+        <label class="form-label d-block bg-light rounded statement-label mb-3">
+          <strong>{{ field.label }}</strong>
+        </label>
+
+        <div class="ms-2">
+          {{ field }}
+        </div>
+
+        {% if field.errors %}
+          <div class="text-danger small mt-2">
+            {{ field.errors }}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="text-center mt-4">
+    {{ next_button }}
+  </div>
+
+{% endblock %}

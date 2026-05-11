@@ -1,0 +1,116 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .char-counter {
+    font-size: 0.9rem;
+  }
+
+  textarea[name="motivation"] {
+    min-height: 120px;
+    width: 100%;
+    resize: vertical;
+    font-size: 1rem;
+  }
+
+  .vignette-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+  <i class="fas fa-pen-nib me-3 text-primary" style="font-size:1.6rem;"></i>
+  <div>
+    <div class="text-muted small">Step 3</div>
+    <h4 class="mb-0 fw-semibold">Explain your evaluation</h4>
+  </div>
+</div>
+
+<p>
+ We asked you to what extent you would attribute the situation below to discrimination, on a scale from -10 (not at all) to 10 (completely).
+  <strong>Your answer was: {{ values.discriminatory }}</strong>.
+Could you please explain in your own words why you gave this assessment?</p>
+</p>
+  <div class="card-body">
+    <div class="mb-2">
+    </div>
+    <div class="vignette-box">
+      {{ vignette }}
+    </div>
+  </div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+
+    <label class="form-label mb-3 d-block bg-light p-2 rounded">
+      <strong>Argumentation</strong>
+    </label>
+
+    {{ form.motivation }}
+
+    <div class="d-flex justify-content-between mt-2">
+      <div class="form-text">
+        Briefly explain your reasoning.
+      </div>
+      <div class="text-muted char-counter">
+        <span id="charCount">0</span> / {{ max_chars }} characters
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="text-center mt-4">
+  {{ next_button }}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const textarea = document.querySelector('textarea[name="motivation"]');
+    const counter = document.getElementById('charCount');
+    const maxChars = {{ max_chars }};
+    const nextBtn = document.querySelector('button.otree-btn-next');
+
+    if (textarea && counter) {
+      function updateCharCount() {
+        const chars = textarea.value.length;
+        counter.textContent = chars;
+
+        if (chars > maxChars) {
+          counter.classList.add('text-danger');
+        } else {
+          counter.classList.remove('text-danger');
+        }
+      }
+
+      textarea.addEventListener('input', updateCharCount);
+      updateCharCount();
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function (event) {
+        const confirmed = confirm(
+          'Once submitted, your answer cannot be changed. Continue?'
+        );
+        if (!confirmed) {
+          event.preventDefault();
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}

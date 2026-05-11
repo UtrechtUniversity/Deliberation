@@ -4,11 +4,12 @@ from settings import (
     GROUP_SIZE as group_size,)
 
 doc = """
-3. Form a group
-4. Show one (random) statement + group members' opinions and motivations
-5. Evaluate each other member (likability, argumentation, trustworthiness, ...)
-6. Update opinion
-7. Nominate discussion partner(s)
+Players are put into 'bins' (M+M-W+W-) and arrive on WaitPage. 
+
+Once enough players are present to populate 3 sets, a batch of groups is constructed.
+
+OR: once all players have arrived (e.g., 60) groups are formed.
+
 """
 
 class Constants(BaseConstants):
@@ -22,31 +23,10 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     pass
 
-def make_rating_field(label):
-    return models.IntegerField(
-        min=-10,
-        max=10,
-        label=label,
-        blank=False,
-    )
-
 class Player(BasePlayer):
-    updated_opinion = models.IntegerField(
-        min=-10,
-        max=10,
-        label="Do you want to update your opinion?",
-        blank=False,
-    )
-    nominated_discussion_partner = models.IntegerField(blank=True)
-
-# create fields for evaluating co-players
-for i in range(1, Constants.players_per_group):
-    setattr(Player, f"like_{i}", make_rating_field(f"Likability: Group member {i}"))
-    setattr(Player, f"strength_{i}", make_rating_field(f"Argument strength: Group member {i}"))
-    setattr(Player, f"trust_{i}", make_rating_field(f"Trustworthiness: Group member {i}"))
+    pass
 
 class GroupFormationPage(WaitPage):
-    group_by_arrival_time = True
 
     @staticmethod #save group id to carry forward to the chatroom
     def after_all_players_arrive(group: Group):
@@ -156,5 +136,7 @@ class NominatePartner(Page):
     def before_next_page(player: Player, timeout_happened):
         player.participant.vars["nominated_discussion_partner"] = player.nominated_discussion_partner
 
-#page_sequence = [GroupFormationPage, GroupOverview]
 page_sequence = [GroupFormationPage, GroupOverview, EvaluateGroup, UpdateOpinion, NominatePartner]
+
+
+

@@ -1,0 +1,141 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .peer-row td {
+    vertical-align: middle;
+    transition: background-color 0.2s ease;
+  }
+
+  .peer-row:hover td {
+    background-color: #f2f6ff;
+  }
+
+  .motivation-box {
+    max-width: 500px;
+    font-size: 0.85rem;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  .info-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .group-badge {
+    font-size: 0.8rem;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+
+  <i class="fas fa-users me-3 text-primary"
+     style="font-size:1.6rem;"></i>
+
+  <div>
+    <div class="text-muted small">
+      Step 4
+    </div>
+
+    <h4 class="mb-0 fw-semibold">
+      Learn from group members
+    </h4>
+  </div>
+
+</div>
+
+
+<div class="info-box">
+
+  <p class="mb-2">
+    Below you see the other participants in your group.
+  </p>
+
+</div>
+
+
+<div class="card shadow-sm">
+
+  <div class="card-body">
+
+    <table class="table align-middle">
+
+      <thead class="table-light">
+
+        <tr>
+          <th style="width: 15%;">Player</th>
+          <th style="width: 15%;">Gender</th>
+          <th style="width: 15%;">Score</th>
+          <th style="width: 55%;">Explanation</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+      {% for p in pseudo_group %}
+
+        <tr class="peer-row">
+
+          <td>
+            P{{ p.id }}
+          </td>
+
+          <td>
+            {{ p.gender }}
+          </td>
+
+          <td>
+            <span class="badge bg-secondary">
+              {{ p.score }}
+            </span>
+          </td>
+
+          <td>
+
+            <div class="motivation-box">
+              {{ p.motivation }}
+            </div>
+
+          </td>
+
+        </tr>
+
+      {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<div class="text-center mt-4">
+  {% next_button %}
+</div>
+
+{% endblock %}

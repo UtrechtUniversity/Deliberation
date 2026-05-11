@@ -1,0 +1,188 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .vignette-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .scale-label {
+    font-size: 0.72rem;
+    color: #6c757d;
+    min-width: 140px;
+    white-space: nowrap;
+  }
+
+  .author-row td {
+    vertical-align: middle;
+    transition: background-color 0.2s ease;
+  }
+
+  .author-row:hover td {
+    background-color: #f2f6ff;
+  }
+
+  .motivation-box {
+    max-width: 450px;
+    font-size: 0.8rem;
+    color: #333;
+  }
+
+  .slider-container {
+    width: 100%;
+    min-width: 0;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+
+  .badge-score {
+    min-width: 30px;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+  <i class="fas fa-users me-3 text-primary" style="font-size:1.6rem;"></i>
+  <div>
+    <div class="text-muted small">Step 4</div>
+    <h4 class="mb-0 fw-semibold">Estimate the opinions of other participants</h4>
+  </div>
+</div>
+
+
+<p>
+Below you will see the scenario again, along with the explanations provided by other participants.
+These participants also indicated how discriminatory they considered the situation to be,
+on a scale from -10 (not discriminatory) to 10 (very discriminatory).
+
+Please estimate each participant’s score using the sliders below.
+</p>
+
+<div class="vignette-box">
+  {{ vignette }}
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <table class="table align-middle">
+
+      <thead class="table-light">
+      <tr>
+        <th style="width: 10%;">Player</th>
+        <th style="width: 10%;">Gender</th>
+        <th style="width: 25%;">Explanation</th>
+        <th style="width: 55%;">Your estimate</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+        {% for a in authors %}
+        <tr class="author-row">
+
+          <td>
+            {{ a.id }}
+          </td>
+
+          <td>
+            {{ a.gender }}
+          </td>
+
+          <td>
+            <div class="motivation-box">
+              {{ a.motivation }}
+            </div>
+          </td>
+
+          <td>
+
+            <div class="d-flex align-items-center gap-3 w-100">
+
+              <span class="scale-label text-start">
+                -10<br>(Not discriminatory)
+              </span>
+
+              <div class="flex-grow-1 slider-container">
+
+                <input
+                  type="range"
+                  class="form-range"
+                  name="author{{ forloop.counter }}_score"
+                  min="-10"
+                  max="10"
+                  step="1"
+                  value="0"
+                  oninput="document.getElementById('val{{ forloop.counter }}').textContent = this.value;"
+                >
+
+                <div class="text-center">
+                  <span class="badge bg-secondary badge-score"
+                        id="val{{ forloop.counter }}">
+                    0
+                  </span>
+                </div>
+
+              </div>
+
+              <span class="scale-label text-end">
+                10<br>(Very discriminatory)
+              </span>
+
+            </div>
+
+          </td>
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="text-center mt-4">
+  {% next_button %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const nextBtn = document.querySelector('button.otree-btn-next');
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function (event) {
+        const confirmed = confirm(
+          'Are you sure you want to submit your estimates? Once submitted, you cannot change them.'
+        );
+
+        if (!confirmed) {
+          event.preventDefault();
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}
