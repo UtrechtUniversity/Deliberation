@@ -17,9 +17,9 @@ class Constants(BaseConstants):
     players_per_group = None
     num_rounds = 1
     demographics_timeout_seconds = 10
-    reading_timeout_seconds = 20
+    reading_timeout_seconds = 180
     writing_timeout_seconds = 15
-    chat_time = 300
+    chat_time = 500
     max_chars = 500 # maximum number of characters for motivation
 
 
