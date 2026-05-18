@@ -1,3 +1,2 @@
 # Deliberation
-
-Selection and influence in online political discussion: An oTree experiment on group deliberation.
+A virtual deliberation lab to study social influence on discrimination attribution
