@@ -4,7 +4,7 @@ SESSION_CONFIGS = [
     dict(
         name='test',
         display_name='test',
-        app_sequence=[#'consent',
+        app_sequence=['consent',
              'experiment'],
         num_demo_participants=16, # the number of participants that can enter the experiment
     ),

@@ -1,7 +1,28 @@
 from otree.api import *
 import random
-
+import csv
+import re
+from pathlib import Path
 from settings import GROUP_SIZE as group_size
+
+# dictionary of forbidden words
+# source: https://github.com/GamerSafer/word-blocklist/blob/main/full-word-list.csv
+BLOCKLIST_FILE = Path(__file__).parent / "full-word-list.csv"
+
+with open(BLOCKLIST_FILE, newline="", encoding="utf-8") as f:
+    BANNED_WORDS = {
+        row[0].strip().lower()
+        for row in csv.reader(f)
+        if row
+    }
+
+# censoring function
+def censor_text(text):
+    pattern = re.compile(
+        r'\b(' + '|'.join(map(re.escape, BANNED_WORDS)) + r')\b',
+        flags=re.IGNORECASE
+    )
+    return pattern.sub('***', text)
 
 doc = """
 1. demographics
@@ -659,6 +680,7 @@ class ShuffleWaitPage(WaitPage):
 class Message(ExtraModel):
     group = models.Link(Group)
     sender = models.Link(Player)
+    raw_text = models.StringField() #uncensored
     text = models.StringField()
 
 def to_dict(msg: Message):
@@ -686,8 +708,16 @@ class ChatPage(Page):
         group = player.group
 
         if 'text' in data:
-            text = data['text']
-            msg = Message.create(group=group, sender=player, text=text)
+            raw_text = data['text']
+            censored_text = censor_text(raw_text)
+
+            msg = Message.create(
+                group=group,
+                sender=player,
+                raw_text=raw_text,
+                text=censored_text,
+            )
+
             return {0: [to_dict(msg)]}
         return {my_id: [to_dict(msg) for msg in Message.filter(group=group)]}
 
@@ -717,7 +747,7 @@ def custom_export(players):
                 msg.sender.participant.code,
                 msg.group.id,
                 msg.sender.id_in_group,
-                msg.text,
+                msg.raw_text,
             ]
 
 #########################################################
@@ -778,7 +808,7 @@ page_sequence = [Demographics, Vignette, Motivation,
                  ShuffleWaitPage,
                  ChatPage, GroupPage,
 
-                 Estimation,
+                 #Estimation,
 
                  ]
 
