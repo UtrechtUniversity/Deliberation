@@ -48,21 +48,16 @@
 </div>
 
 <p>
-  Below you will find the scenario again.
-</p>
-
-<div class="vignette-box">
-  {{ vignette }}
-</div>
-
-<p>
   After having
   {% if condition == "deliberation" %}
     discussed with your group members,
   {% else %}
     seen your group members’ positions and arguments,
-  {% endif %} you may update your evaluation of the scenario using the sliders below.
+  {% endif %} you may update your evaluation of the scenario below using the sliders.
 </p>
+<div class="vignette-box">
+  {{ vignette }}
+</div>
 
 
 <div class="card shadow-sm statement-card">
