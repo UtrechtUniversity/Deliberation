@@ -1,0 +1,74 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .info-box {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .return-btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+  <i class="fas fa-exclamation-triangle me-3 text-warning" style="font-size:1.6rem;"></i>
+  <div>
+    <h4 class="mb-0 fw-semibold">Not eligible</h4>
+  </div>
+</div>
+
+<div class="info-box">
+
+  <p>
+    Unfortunately, you do not meet the criteria to continue in this study. Please return your submission via Prolific.
+  </p>
+
+  <p>
+    As compensation for your time spent completing the reading and writing task, you will receive £{{ pay }}.
+  </p>
+
+  <form method="post" class="text-center mt-4">
+    <button class="otree-btn-next btn btn-primary return-btn" id="return-btn">
+      Return to Prolific (<span id="countdown">45</span>)
+    </button>
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let seconds = {{ timeout_seconds }};
+
+let countdown = document.getElementById("countdown");
+let button = document.getElementById("return-btn");
+
+let interval = setInterval(function () {
+    seconds -= 1;
+    countdown.innerHTML = seconds;
+
+    if (seconds <= 0) {
+        clearInterval(interval);
+        button.innerHTML = "Redirecting...";
+        document.querySelector("form").submit();
+    }
+}, 1000);
+</script>
+{% endblock %}

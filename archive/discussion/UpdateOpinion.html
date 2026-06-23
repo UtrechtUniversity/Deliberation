@@ -14,24 +14,24 @@
   <i class="fas fa-sync-alt me-3 text-primary" style="font-size:1.6rem;"></i>
   <div>
     <div class="text-muted small">Step 6</div>
-    <h4 class="mb-0 fw-semibold">Update your opinion</h4>
+    <h4 class="mb-0 fw-semibold">Update your assessment</h4>
   </div>
 </div>
 
 <p>
-  After seeing your group members’ opinions and motivations, you may update your opinion using the slider below.
+  Below you will find the scenario again. After seeing your group members’ opinions and motivations, you may update your opinion using the slider below.
 </p>
 
 <div class="card mb-4 shadow-sm">
   <div class="card-body">
 
     <label class="form-label mb-3 d-block bg-light p-2 rounded">
-      <strong>{{ statement }}</strong>
+      <strong>{{ vignette }}</strong>
     </label>
 
     <div class="mb-3 text-muted small">
       Your initial opinion:
-      <span class="badge bg-secondary ms-2" id="initialBadge">{{ initial_opinion }}</span>
+      <span class="badge bg-secondary ms-2" id="initialBadge">{{ values.discriminatory }}</span>
     </div>
 
     <div class="d-flex align-items-center gap-3">
@@ -45,10 +45,10 @@
         min="-10"
         max="10"
         step="1"
-        value="{{ initial_opinion }}"
+        value="{{ values.discriminatory }}"
         oninput="document.getElementById('val_updated_opinion').textContent = this.value;"
       >
-      <span class="badge bg-secondary" id="val_updated_opinion">{{ initial_opinion }}</span>
+      <span class="badge bg-secondary" id="val_updated_opinion">{{ values.discriminatory }}</span>
       <span class="text-muted" style="min-width:180px; text-align:right;">
         10 (Totally agree)
       </span>

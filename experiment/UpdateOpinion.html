@@ -1,0 +1,158 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .statement-label {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    padding: 0.6rem 0.9rem;
+  }
+
+  .statement-card {
+    margin-bottom: 1rem;
+  }
+
+  .scale-label {
+    font-size: 0.7rem;
+    line-height: 1.2;
+    color: #6c757d;
+    min-width: 140px;
+  }
+
+  .vignette-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+  <i class="fas fa-sync-alt me-3 text-primary" style="font-size:1.6rem;"></i>
+  <div>
+    <div class="text-muted small">Step 5</div>
+    <h4 class="mb-0 fw-semibold">Update your assessment</h4>
+  </div>
+</div>
+
+<p>
+  Below you will find the scenario again.
+</p>
+
+<div class="vignette-box">
+  {{ vignette }}
+</div>
+
+<p>
+  After having
+  {% if condition == "deliberation" %}
+    discussed with your group members,
+  {% else %}
+    seen your group members’ positions and arguments,
+  {% endif %} you may update your evaluation of the scenario using the sliders below.
+</p>
+
+
+<div class="card shadow-sm statement-card">
+  <div class="card-body">
+
+    <label class="form-label d-block bg-light rounded statement-label">
+      <strong>To what extent do you think this situation is problematic?</strong>
+    </label>
+
+    <div class="d-flex align-items-center gap-3">
+
+      <span class="scale-label">-10 (Not problematic)</span>
+
+      <input
+        type="range"
+        class="form-range flex-grow-1"
+        name="update_problematic"
+        id="id_update_problematic"
+        min="-10"
+        max="10"
+        step="1"
+        value="{{ values.problematic }}"
+        oninput="document.getElementById('val_problematic').textContent = this.value;"
+      >
+
+      <span class="badge bg-secondary" id="val_problematic">
+        {{ values.problematic }}
+      </span>
+
+      <span class="scale-label text-end">10 (Very problematic)</span>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="card shadow-sm statement-card">
+  <div class="card-body">
+
+    <label class="form-label d-block bg-light rounded statement-label">
+      <strong>To what extent do you think this situation is discriminatory?</strong>
+    </label>
+
+    <div class="d-flex align-items-center gap-3">
+
+      <span class="scale-label">-10 (Not discriminatory)</span>
+
+      <input
+        type="range"
+        class="form-range flex-grow-1"
+        name="update_discriminatory"
+        id="id_update_discriminatory"
+        min="-10"
+        max="10"
+        step="1"
+        value="{{ values.discriminatory }}"
+        oninput="document.getElementById('val_discriminatory').textContent = this.value;"
+      >
+
+      <span class="badge bg-secondary" id="val_discriminatory">
+        {{ values.discriminatory }}
+      </span>
+
+      <span class="scale-label text-end">10 (Very discriminatory)</span>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="text-center mt-4">
+  {{ next_button }}
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const nextBtn = document.querySelector('button.otree-btn-next');
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function (event) {
+      const confirmed = confirm('Are you sure you want to submit your updated answers?');
+      if (!confirmed) event.preventDefault();
+    });
+  }
+
+});
+</script>
+
+{% endblock %}
