@@ -804,7 +804,7 @@ class Estimation(Page):
                     vignette = vignette_text)
 
 
-page_sequence = [Demographics, Vignette, Motivation,
+page_sequence = [Demographics, Vignette, #Motivation,
                  ShuffleWaitPage,
                  ChatPage, GroupPage,
 
