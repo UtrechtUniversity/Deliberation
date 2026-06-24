@@ -11,6 +11,8 @@ SESSION_CONFIGS = [
         completionlink_pseudo = 'https://app.prolific.com/submissions/complete?cc=PSEUDO',
         completionlink_deliberation = 'https://app.prolific.com/submissions/complete?cc=DELIBERATION',
         completionlink_nocategory = 'https://app.prolific.com/submissions/complete?cc=NO_CATEGORY'),
+
+
 ]
 
 ROOMS = [
