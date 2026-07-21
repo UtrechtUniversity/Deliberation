@@ -50,9 +50,9 @@
 <p>
   After having
   {% if condition == "deliberation" %}
-    discussed with your group members,
+    discussed with the committee members,
   {% else %}
-    seen your group members’ positions and arguments,
+    seen the other committee members’ positions and arguments,
   {% endif %} you may update your evaluation of the scenario below using the sliders.
 </p>
 <div class="vignette-box">
@@ -64,12 +64,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think this situation is problematic?</strong>
+      <strong>To what extent do you think the hiring decision is problematic?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not problematic)</span>
+      <span class="scale-label">-10 (Not at all)</span>
 
       <input
         type="range"
@@ -87,7 +87,7 @@
         {{ values.problematic }}
       </span>
 
-      <span class="scale-label text-end">10 (Very problematic)</span>
+      <span class="scale-label text-end">10 (Very much)</span>
 
     </div>
 
@@ -98,12 +98,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think this situation is discriminatory?</strong>
+      <strong>To what extent do you think discrimination played a role in the hiring decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not discriminatory)</span>
+      <span class="scale-label">-10 (Not at all)</span>
 
       <input
         type="range"
@@ -121,13 +121,12 @@
         {{ values.discriminatory }}
       </span>
 
-      <span class="scale-label text-end">10 (Very discriminatory)</span>
+      <span class="scale-label text-end">10 (Very much)</span>
 
     </div>
 
   </div>
 </div>
-
 
 
 <div class="text-center mt-4">

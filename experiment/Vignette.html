@@ -47,27 +47,31 @@
   </div>
 </div>
 
-<p> Below you will find a short scenario. Please read it carefully.</p>
+<p> Imagine that you work for a company.
+    A recent hiring decision has been made, and you have been asked to serve on an internal committee that will review that decision.
+    At this stage, the committee has only the information provided below.
+</p>
 
 <div class="vignette-box">
   {{ vignette }}
 </div>
 
-<p>People may interpret workplace situations in different ways. Some people may view the situation as problematic, while others may not. Please indicate your personal evaluation of the situation using the sliders below.
+<p>
+    Before meeting with the other committee members, each member is asked to provide an independent preliminary assessment based solely on the information currently available.
+    Please indicate your evaluation of the situation using the sliders below.
 </p>
-
 
 <!-- Problematic question -->
 <div class="card shadow-sm statement-card">
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think this situation is problematic?</strong>
+      <strong>To what extent do you think the hiring decision is problematic?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not problematic)</span>
+      <span class="scale-label">-10 (Not at all)</span>
 
       <input
         type="range"
@@ -83,7 +87,7 @@
 
       <span class="badge bg-secondary" id="val_problematic">0</span>
 
-      <span class="scale-label text-end">10 (Very problematic)</span>
+      <span class="scale-label text-end">10 (Very much)</span>
 
     </div>
 
@@ -95,12 +99,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think this situation is discriminatory?</strong>
+      <strong>To what extent do you think discrimination played a role in the hiring decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not discriminatory)</span>
+      <span class="scale-label">-10 (Not at all)</span>
 
       <input
         type="range"
@@ -116,7 +120,7 @@
 
       <span class="badge bg-secondary" id="val_discriminatory">0</span>
 
-      <span class="scale-label text-end">10 (Very discriminatory)</span>
+      <span class="scale-label text-end">10 (Very much)</span>
 
     </div>
 
@@ -129,7 +133,7 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent can you imagine that others would perceive this situation as discrimination?</strong>
+      <strong>To what extent do you think the other committee members will believe that discrimination played a role in the hiring decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">

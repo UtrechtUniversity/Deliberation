@@ -1,43 +1,117 @@
-<div class="d-flex p-3 mb-4 rounded bg-light border shadow-sm align-items-start">
+<div class="d-flex p-3 mb-4 rounded bg-light border shadow-sm align-items-start justify-content-between">
+  <div class="d-flex align-items-start">
 
-  <!-- Left side (icon + title) -->
-  <i class="fas fa-comments me-3 text-primary" style="font-size:1.6rem;"></i>
+    <i class="fas fa-comments me-3 text-primary" style="font-size:1.6rem;"></i>
 
-  <div class="flex-grow-1">
-    <div class="text-muted small">Step 4</div>
-    <h4 class="mb-0 fw-semibold">Group chat</h4>
-    <div class="text-muted small">Discuss with your group members ...</div>
+    <div>
+      <div class="text-muted small">Step 4</div>
+      <h4 class="mb-0 fw-semibold">Committee discussion</h4>
+      <div class="text-muted small">
+        Discuss the hiring decision with the other committee members ...
+      </div>
+    </div>
+    <div id="timerDisplay" class="timer-floating">
+    ⏳ Time left: 00:00
+</div>
   </div>
 
-  <!-- Right side (instructions) -->
-  <div class="ms-4" style="min-width: 280px;">
-    <ul class="text-muted small mb-0 ps-3">
-      <li>Share your opinions clearly and explain your reasoning.</li>
-      <li>Respond thoughtfully to what others say.</li>
-      <li>Stay respectful, even if you disagree.</li>
-      <li>Keep your discussion focused on the topic.</li>
-      <li>Do not share personal information.</li>
-      <li>Make sure everyone in the group has a chance to contribute.</li>
-    </ul>
-  </div>
+  <div class="d-flex flex-column align-items-end gap-2">
+
+  <button type="button"
+          class="btn btn-outline-secondary btn-sm w-100"
+          onclick="toggleFullScreen()">
+    ⛶ Full screen
+  </button>
+
+  <button type="button"
+        class="btn btn-outline-secondary btn-sm w-100"
+        onclick="toggleInstructions(event)">
+  📘 Instructions
+</button>
+
+</div>
 
 </div>
 
 <div class="chat-wrapper mx-auto">
-  <div class="card mb-3 shadow-sm flex-grow-1 d-flex">
-    <div id="chat_messages" class="chat-card flex-grow-1" role="log" aria-live="polite">
+  <div class="row g-3">
 
+
+    <div class="col-md-9">
+      <div class="card shadow-sm h-100 d-flex">
+        <div id="chat_messages"
+             class="chat-card flex-grow-1"
+             role="log"
+             aria-live="polite">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="d-flex flex-column h-100">
+
+        <div class="chat-input-wrapper">
+  <textarea id="chat_input"
+    maxlength="500"
+    class="form-control"
+    rows="4"
+    placeholder="Type your message..."></textarea>
+
+  <div id="charCounter" class="chat-counter">0/500</div>
+</div>
+
+        <div id="mentionDropdown" class="mention-dropdown d-none"></div>
+
+        <div class="text-muted small mb-2">
+Type <b>@</b> to mention a player<br>You are Player {{ my_id }}
+</div>
+
+        <button type="button"
+                class="btn btn-primary"
+                onclick="sendMsg()">
+          <i class="fas fa-paper-plane"></i> Send (Enter)
+        </button>
+
+        <div id="completionMsg" class="alert alert-success small mt-3 d-none">
+  You completed the discussion phase of the study!
+</div>
+
+        <button type="button"
+        id="nextBtn"
+        class="btn btn-success mt-2 w-100 d-none"
+        onclick="goNext()">
+  ➜ Next
+</button>
+
+
+      </div>
     </div>
   </div>
 
-  <div class="input-group mb-4">
-    <input type="text" id="chat_input" class="form-control"
-           placeholder="Type your message..." aria-label="Type a message">
-    <button type="button" class="btn btn-primary" onclick="sendMsg()">
-      <i class="fas fa-paper-plane"></i> Send
+</div>
+
+
+<div id="instructionsOverlay" class="instructions-overlay d-none" onclick="overlayClick(event)">
+  <div class="instructions-box" onclick="event.stopPropagation()">
+    <button type="button" class="close-btn" onclick="toggleInstructions()">
+      ✕
     </button>
+
+    <p>
+  Discuss whether discrimination played a role in the hiring decision.
+      Explain your reasoning and try to understand where your views align or differ with those of other committee members.
+    </p>
+    <div class="vignette-box">
+      {{ vignette }}
+    </div>
+    <br>
+     <p style="font-size: 0.8rem; font-style: italic; color: #6c757d;">
+       You indicated that discrimination played a role in the hiring decision to an extent of {{ discriminatory }}, on a scale from −10 (Not at all) to 10 (Very much).
+     </p>
+
   </div>
 </div>
+
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
@@ -102,6 +176,7 @@
     line-height: 1.2;
     display: inline-block;
     word-wrap: break-word;
+    white-space: pre-wrap;
   }
 
   .chat-message.me .bubble {
@@ -129,11 +204,12 @@
     margin-top: 0.15rem;
   }
 
-  .input-group .form-control {
-    flex: 1;
-    font-size: 0.9rem;
-    padding: 0.45rem 0.75rem;
-  }
+#chat_input {
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem;
+  resize: none;
+  min-height: 140px;
+}
 
   .input-group .btn {
     flex-shrink: 0;
@@ -147,23 +223,330 @@
       max-width: 100%;
     }
   }
+
+  .chat-message .sender {
+    font-weight: 600;
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+}
+
+  .no-scroll {
+  overflow: hidden !important;
+  height: 100vh;
+}
+
+  .instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.instructions-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+}
+
+.vignette-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+  }
+
+.mention-dropdown {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  z-index: 10000;
+  width: 160px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.mention-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.mention-item:hover {
+  background: #f1f3f5;
+}
+
+.mention {
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.mention-item.active {
+  background: #e9ecef;
+}
+
+.mention.p1 { color: #3b82f6; background: rgba(59,130,246,0.12); }
+.mention.p2 { color: #059669; background: rgba(5,150,105,0.12); }
+.mention.p3 { color: #d97706; background: rgba(217,119,6,0.12); }
+.mention.p4 { color: #7c3aed; background: rgba(124,58,237,0.12); }
+
+/* Sender colors */
+.sender.p1 { color: #3b82f6; }
+.sender.p2 { color: #059669; }
+.sender.p3 { color: #d97706; }
+.sender.p4 { color: #7c3aed; }
+
+#charCounter {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  user-select: none;
+}
+
+.chat-input-wrapper {
+  position: relative;
+}
+
+.chat-input-wrapper textarea {
+  padding-bottom: 28px; /* space so text doesn't overlap counter */
+}
+
+.chat-counter {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  user-select: none;
+  pointer-events: none;
+}
+
+.timer-flash {
+  animation: flash 1s infinite;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
 </style>
 
 <script>
   let chat_input = document.getElementById('chat_input');
   let chat_messages = document.getElementById('chat_messages');
+  let mentionDropdown = document.getElementById('mentionDropdown');
+  let lastSendTime = 0;
   let lastSender = null;
 
+  let mentionIndex = -1;
+  let mentionItems = [];
+
+  let completionMsg = document.getElementById("completionMsg");
+
+  // =========================
+  // TIMER + UI
+  // =========================
+  const timeLimit = js_vars.time_limit || 300;
+
+// IMPORTANT: comes from server (persisted in participant.vars)
+const startTime = js_vars.start_time * 1000;
+
+let chatDisabled = false;
+let flashing = false;
+
+let nextBtn = document.getElementById("nextBtn");
+let sendBtn = document.querySelector("button[onclick='sendMsg()']");
+let timerDisplay = document.getElementById("timerDisplay");
+
+function getRemainingSeconds() {
+  const now = Date.now();
+  const elapsed = (now - startTime) / 1000;
+  return Math.max(0, timeLimit - elapsed);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+function showCompletionUI() {
+  if (completionMsg) completionMsg.classList.remove("d-none");
+  if (nextBtn) nextBtn.classList.remove("d-none");
+}
+
+function updateTimerUI() {
+  const remaining = getRemainingSeconds();
+
+  timerDisplay.textContent = `⏳ Time left: ${formatTime(remaining)}`;
+
+  // reset styles
+  timerDisplay.style.color = "#6c757d";
+  timerDisplay.style.fontWeight = "600";
+  timerDisplay.classList.remove("timer-flash");
+
+  if (remaining <= 60 && remaining > 30) {
+    timerDisplay.style.color = "orange";
+  }
+
+  if (remaining <= 30 && remaining > 0) {
+    timerDisplay.style.color = "red";
+    timerDisplay.style.fontWeight = "700";
+    timerDisplay.classList.add("timer-flash");
+  }
+
+  // =========================
+  // ONLY END STATE (0 seconds)
+  // =========================
+  if (remaining <= 0) {
+    timerDisplay.textContent = "⏰ Time is up";
+    timerDisplay.style.color = "red";
+
+    chatDisabled = true;
+    chat_input.disabled = true;
+
+    if (sendBtn) sendBtn.disabled = true;
+
+    if (nextBtn) nextBtn.classList.remove("d-none");
+
+    if (completionMsg) completionMsg.classList.remove("d-none");
+
+    clearInterval(timerInterval);
+  }
+}
+
+function endChat() {
+  chatDisabled = true;
+
+  chat_input.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
+
+  hideMentionDropdown();
+
+  if (nextBtn) nextBtn.classList.remove("d-none");
+
+  timerDisplay.textContent = "⏰ Time is up";
+  timerDisplay.style.color = "red";
+
+  chatDisabled = true;
+chat_input.disabled = true;
+
+if (sendBtn) sendBtn.disabled = true;
+if (nextBtn) nextBtn.classList.remove("d-none");
+}
+
+// run every second
+const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
+
+  function goNext() {
+  const form = document.querySelector("form");
+
+  if (form) {
+    form.submit();
+  } else {
+
+    liveSend({action: "next"});
+  }
+}
+
+  // =========================
+  // CHAT CORE
+  // =========================
+
+  function getPlayers() {
+    const myId = js_vars.my_id;
+    const players = [];
+    for (let i = 1; i <= 4; i++) {
+      if (i !== myId) players.push(i);
+    }
+    return players;
+  }
+
   chat_input.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") sendMsg();
+    const dropdownOpen = !mentionDropdown.classList.contains("d-none");
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      if (dropdownOpen) {
+        event.preventDefault();
+        selectMention();
+        return;
+      }
+
+      event.preventDefault();
+      sendMsg();
+      hideMentionDropdown();
+      return;
+    }
+
+    if (event.key === "Escape") {
+      hideMentionDropdown();
+      return;
+    }
+
+    if (dropdownOpen) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        moveMention(1);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        moveMention(-1);
+        return;
+      }
+    }
+  });
+
+  chat_input.addEventListener("input", handleMention);
+  chat_input.addEventListener("click", handleMention);
+
+  document.addEventListener("click", function (e) {
+    if (!mentionDropdown.contains(e.target) && e.target !== chat_input) {
+      hideMentionDropdown();
+    }
   });
 
   function sendMsg() {
+    if (chatDisabled) return;
+
+    let now = Date.now();
+    if (now - lastSendTime < 2000) return;
+
     let text = chat_input.value.trim();
-    if (text) {
-      liveSend({'text': text});
-    }
+    if (!text) return;
+
+    if (text.length > 500) text = text.slice(0, 500);
+
+    liveSend({text});
+
     chat_input.value = '';
+    updateCounter();
+    hideMentionDropdown();
+
+    lastSendTime = now;
   }
 
   function fadeInMessage(msgDiv, delay) {
@@ -176,8 +559,18 @@
     }, delay);
   }
 
+  function escapeHTML(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   function liveRecv(messages) {
     let delay = 0;
+
     for (let msg of messages) {
       const isMe = msg.sender === js_vars.my_id;
 
@@ -188,27 +581,226 @@
         msgDiv.classList.add('sender-changed');
       }
 
+      let senderLabel = isMe
+        ? `Player ${js_vars.my_id} (Me)`
+        : `Player ${msg.sender} (${msg.sender_gender})`;
+
       let senderHTML = '';
       if (lastSender !== msg.sender) {
-        senderHTML = `<div class="sender">${isMe ? 'Me' : `Player ${msg.sender}`}</div>`;
+        senderHTML = `<div class="sender p${msg.sender}">${senderLabel}</div>`;
       }
 
-      const time = new Date(msg.timestamp || Date.now())
-              .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+      let timeHTML = '';
+      if (lastSender !== msg.sender) {
+        const time = new Date(msg.timestamp || Date.now())
+          .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
-      msgDiv.innerHTML = `${senderHTML}
-          <div class="bubble">${msg.text}</div>
-          <div class="time">${time}</div>`;
+        timeHTML = `<div class="time">${time}</div>`;
+      }
+
+      let safeText = escapeHTML(msg.text);
+      safeText = formatMentions(safeText);
+
+      msgDiv.innerHTML = `
+        ${senderHTML}
+        <div class="bubble">${safeText}</div>
+        ${timeHTML}
+      `;
 
       chat_messages.appendChild(msgDiv);
       fadeInMessage(msgDiv, delay);
-      delay += 80;
 
+      delay += 80;
       lastSender = msg.sender;
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function formatMentions(text) {
+    return text.replace(/@Player (\d+)/g, (m, id) =>
+      `<span class="mention p${id}">@Player ${id}</span>`
+    );
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
     liveSend({});
+    updateTimerUI();
   });
+
+  function toggleFullScreen() {
+    const el = document.documentElement;
+
+    if (!document.fullscreenElement) {
+      el.requestFullscreen();
+      document.body.classList.add("no-scroll");
+    } else {
+      document.exitFullscreen();
+      document.body.classList.remove("no-scroll");
+    }
+  }
+
+  function toggleInstructions() {
+    document.getElementById('instructionsOverlay')
+      .classList.toggle('d-none');
+  }
+
+  function overlayClick() {
+    toggleInstructions();
+  }
+
+  // =========================
+  // MENTIONS (unchanged)
+  // =========================
+
+  function showMentionDropdown(query = "") {
+    mentionDropdown.innerHTML = "";
+
+    const players = getPlayers();
+
+    const filtered = players.filter(p => {
+      const label = `player ${p}`.toLowerCase();
+      return query === "" || label.includes(query);
+    });
+
+    if (filtered.length === 0) {
+      hideMentionDropdown();
+      return;
+    }
+
+    mentionIndex = 0;
+    mentionItems = filtered;
+
+    filtered.forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "mention-item" + (i === 0 ? " active" : "");
+      div.textContent = `Player ${p}`;
+      div.onclick = () => insertMention(p);
+      mentionDropdown.appendChild(div);
+    });
+
+    positionDropdown();
+    mentionDropdown.classList.remove("d-none");
+  }
+
+  function moveMention(dir) {
+    const items = mentionDropdown.querySelectorAll(".mention-item");
+    if (!items.length) return;
+
+    mentionIndex += dir;
+
+    if (mentionIndex < 0) mentionIndex = items.length - 1;
+    if (mentionIndex >= items.length) mentionIndex = 0;
+
+    items.forEach((el, i) => {
+      el.classList.toggle("active", i === mentionIndex);
+    });
+  }
+
+  function selectMention() {
+    const items = mentionDropdown.querySelectorAll(".mention-item");
+    if (!items.length) return;
+
+    const text = items[mentionIndex].textContent;
+    const id = text.match(/\d+/)[0];
+
+    insertMention(id);
+  }
+
+  function handleMention() {
+    const pos = chat_input.selectionStart;
+    const before = chat_input.value.slice(0, pos);
+
+    const atPos = before.lastIndexOf("@");
+    if (atPos === -1) return hideMentionDropdown();
+
+    const afterAt = before.slice(atPos + 1);
+
+    if (afterAt.trim().split(" ").length > 2) {
+      hideMentionDropdown();
+      return;
+    }
+
+    showMentionDropdown(afterAt.toLowerCase());
+  }
+
+  function positionDropdown() {
+    const textarea = chat_input;
+    const rect = textarea.getBoundingClientRect();
+
+    const div = document.createElement("div");
+    const style = getComputedStyle(textarea);
+
+    div.style.position = "absolute";
+    div.style.visibility = "hidden";
+    div.style.whiteSpace = "pre-wrap";
+    div.style.wordWrap = "break-word";
+    div.style.font = style.font;
+    div.style.padding = style.padding;
+    div.style.border = style.border;
+    div.style.width = textarea.clientWidth + "px";
+
+    const text = textarea.value.substring(0, textarea.selectionStart);
+    div.textContent = text;
+
+    const span = document.createElement("span");
+    span.textContent = ".";
+    div.appendChild(span);
+
+    document.body.appendChild(div);
+
+    const spanRect = span.getBoundingClientRect();
+    const divRect = div.getBoundingClientRect();
+
+    document.body.removeChild(div);
+
+    mentionDropdown.style.left =
+      (rect.left + spanRect.left - divRect.left) + "px";
+
+    mentionDropdown.style.top =
+      (rect.top + spanRect.top - divRect.top + 20) + "px";
+  }
+
+  function hideMentionDropdown() {
+    mentionDropdown.classList.add("d-none");
+    mentionIndex = -1;
+  }
+
+  function insertMention(playerId) {
+    const pos = chat_input.selectionStart;
+    const text = chat_input.value;
+
+    const before = text.slice(0, pos);
+    const after = text.slice(pos);
+
+    const atPos = before.lastIndexOf("@");
+    if (atPos === -1) return;
+
+    const newBefore = before.slice(0, atPos);
+
+    const mention = `@Player ${playerId} `;
+
+    chat_input.value = newBefore + mention + after;
+
+    const newPos = newBefore.length + mention.length;
+
+    chat_input.focus();
+    chat_input.setSelectionRange(newPos, newPos);
+
+    hideMentionDropdown();
+  }
+
+  const charCounter = document.getElementById("charCounter");
+
+  chat_input.addEventListener("input", updateCounter);
+
+  function updateCounter() {
+    const len = chat_input.value.length;
+    charCounter.textContent = `${len}/500`;
+
+    if (len >= 500) charCounter.style.color = "red";
+    else if (len > 450) charCounter.style.color = "orange";
+    else charCounter.style.color = "#6c757d";
+  }
+
+  document.addEventListener("DOMContentLoaded", updateCounter);
+
 </script>

@@ -1,5 +1,6 @@
 from otree.api import *
 import random
+import time
 import csv
 import re
 from pathlib import Path
@@ -24,6 +25,16 @@ def censor_text(text):
     )
     return pattern.sub('***', text)
 
+# load vignette
+
+VIGNETTE_DIR = Path(__file__).parent / "vignettes"
+def load_vignette(session):
+    vignette_name = session.config['vignette']
+    path = VIGNETTE_DIR / f"{vignette_name}.txt"
+
+    with open(path, encoding="utf-8") as f:
+        return f.read().strip()
+
 doc = """
 1. demographics
 2. reading task
@@ -31,16 +42,17 @@ doc = """
 4. waiting lobby and group formation
 5a. group deliberation 
 5b. quasi-groups
+6. update opinion
 """
 
 class Constants(BaseConstants):
     name_in_url = 'experiment'
     players_per_group = None
     num_rounds = 1
-    demographics_timeout_seconds = 10
-    reading_timeout_seconds = 180
-    writing_timeout_seconds = 15
-    chat_time = 500
+    demographics_timeout_seconds = 60
+    reading_timeout_seconds = 240
+    writing_timeout_seconds = 300
+    chat_time = 1200
     max_chars = 500 # maximum number of characters for motivation
 
 
@@ -50,13 +62,6 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
     pass
-
-# vignette text (reading task)
-vignette_text = \
-    "The company where you work is hiring a new department manager. "\
-    "Two internal candidates apply: Mary and Paul. You know these candidates well. "\
-    "Both have worked at the company for several years and have similar qualifications and performance evaluations. "\
-    "In the end, Paul is selected for the position instead of Mary."
 
 # scale from -10 (no discrimination) to 10 (discrimination)
 scale_choices = [(i, str(i)) for i in range(-10, 11)]
@@ -77,19 +82,32 @@ class Player(BasePlayer):
     vignette_problematic = models.IntegerField(
         choices=scale_choices,
         widget=widgets.RadioSelect,
-        label="To what extent do you think this situation is problematic?"
+        label="To what extent do you think the hiring decision is problematic?"
     )
 
     vignette_discriminatory = models.IntegerField(
         choices=scale_choices,
         widget=widgets.RadioSelect,
-        label="To what extent do you think this situation is discriminatory?"
+        label="To what extent do you think discrimination played a role in the hiring decision?"
     )
 
     vignette_imagine = models.IntegerField(
         choices=scale_choices,
         widget=widgets.RadioSelect,
-        label="To what extent can you imagine others would perceive this situation as discriminatory?"
+        label="To what extent do you think the other committee members will believe that discrimination played a role in the hiring decision?"
+    )
+
+    #and fields for updated assessment after discussion:
+    update_problematic = models.IntegerField(
+        choices=scale_choices,
+        widget=widgets.RadioSelect,
+        label="To what extent do you think the hiring decision is problematic?"
+    )
+
+    update_discriminatory = models.IntegerField(
+        choices=scale_choices,
+        widget=widgets.RadioSelect,
+        label="To what extent do you think discrimination played a role in the hiring decision?"
     )
 
     # argumentation in own words
@@ -99,10 +117,27 @@ class Player(BasePlayer):
 
     arrived_grouppage = models.BooleanField(initial=False) # keep track of who reached the group formation phase
 
-    # fields for the 'estimation' task
-    author1_score = models.IntegerField(min=-10, max=10)
-    author2_score = models.IntegerField(min=-10, max=10)
-    author3_score = models.IntegerField(min=-10, max=10)
+    #rules of behavior for deliberation phase
+    waiver_accepted = models.BooleanField(
+        label="I have read and agree to the terms above.",
+        initial=False
+    )
+
+    # fields for the 'estimation' task (optional)
+    #author1_score = models.IntegerField(min=-10, max=10)
+    #author2_score = models.IntegerField(min=-10, max=10)
+    #author3_score = models.IntegerField(min=-10, max=10)
+
+    #evaluating players:
+    #like_1 = models.IntegerField()
+    #like_2 = models.IntegerField()
+    #like_3 = models.IntegerField()
+    #strength_1 = models.IntegerField()
+    #strength_2 = models.IntegerField()
+    #strength_3 = models.IntegerField()
+    #trust_1 = models.IntegerField()
+    #trust_2 = models.IntegerField()
+    #trust_3 = models.IntegerField()
 
 def timeout_check(player, timeout_happened):
     participant = player.participant
@@ -140,7 +175,7 @@ class Vignette(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(vignette=vignette_text)
+        return dict(vignette=load_vignette(player.session))
 
     @staticmethod
     def get_timeout_seconds(player):
@@ -176,6 +211,11 @@ class Motivation(Page):
     form_model = "player"
     form_fields = ["motivation"]
 
+    #everyone gives motivation (also those with non-binary gender and neutral discrimination attribution)
+    #@staticmethod
+    #def is_displayed(player):
+    #    return player.participant.vars.get("category") is not None
+
     @staticmethod
     def get_timeout_seconds(player):
         return timeout_time(player, Constants.writing_timeout_seconds)
@@ -184,7 +224,7 @@ class Motivation(Page):
     def vars_for_template(player: Player):
         return dict(
             max_chars=Constants.max_chars,
-            vignette = vignette_text,
+            vignette = load_vignette(player.session),
             values = {
                 "problematic": player.vignette_problematic,
                 "discriminatory": player.vignette_discriminatory,
@@ -209,9 +249,6 @@ class Motivation(Page):
 #########################################################
 # after completing these tasks, players wait on a waiting page until all N players have arrived,
 # and then (sets of) groups are constructed
-
-#@RF: can i here make sure that those 'neutrals' enter the waitpage and leave it immediately
-# (does that stop further groups from forming)
 
 ########### some helper functions ###########
 # retrieve the category of a player (M+, M-, W+, W-)
@@ -287,7 +324,6 @@ SCHEMA = {
 # GROUP CONSTRUCTION
 # =========================
 def build_group(schema, refs_by_sign, bins):
-
     # create temporary working pools (copies of the category-bins)
     pools = {k: bins[k].copy() for k in bins}
     result = []
@@ -325,6 +361,13 @@ class ShuffleWaitPage(WaitPage):
     template_name = "experiment/GroupFormationPage.html"
     wait_for_all_groups = True
 
+   # hide from None (neutral/non-binary); these return to Prolific
+    # @RF: and those without motivation (that is, who timed-out).
+
+    @staticmethod
+    def is_displayed(player):
+        return player.participant.vars.get("category") is not None
+
     # keep track of the progress (% of players arrived at the waitpage)
     def vars_for_template(player):
         if not player.arrived_grouppage:
@@ -337,7 +380,8 @@ class ShuffleWaitPage(WaitPage):
         percent = (total_arrived / total_needed) * 100 if total_needed > 0 else 0
         percent = min(int(percent), 99)
 
-        return dict(percent=percent)
+        return dict(percent=percent,
+                    category=player.participant.vars.get("category"))
 
     @staticmethod
     def after_all_players_arrive(subsession):
@@ -637,7 +681,7 @@ class ShuffleWaitPage(WaitPage):
                     "id": m.id_in_subsession,
                     "gender": m.gender,
                     "score": get_score(m),
-                    "motivation": m.motivation,
+                    "motivation": m.field_maybe_none("motivation"),
                     "category": get_category(m),
                 }
                 for m in pseudo_group
@@ -686,6 +730,37 @@ class Message(ExtraModel):
 def to_dict(msg: Message):
     return dict(sender=msg.sender.id_in_group, text=msg.text)
 
+class Instruction(Page):
+    form_model = 'player'
+    form_fields = ['waiver_accepted']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.participant.vars.get("set_id") is not None
+
+    @staticmethod
+    def vars_for_template(player):
+        return dict(
+            timeout_seconds=90,
+            vignette = load_vignette(player.session),
+            discriminatory = player.vignette_discriminatory
+            )
+
+
+class ChatWaitPage(WaitPage):
+    wait_for_all_groups = False
+
+    title_text = "Preparing discussion"
+    body_text = (
+        "Please wait while the committee members get ready.<br>"
+        "The discussion will begin automatically once everyone is ready."
+    )
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.participant.vars.get("set_id") is not None
+
+
 class ChatPage(Page):
     timer_text = 'Time remaining:'
 
@@ -696,11 +771,28 @@ class ChatPage(Page):
 
     @staticmethod
     def get_timeout_seconds(player):
-        return timeout_time(player, Constants.chat_time)
+        return None  # manual-end
 
     @staticmethod
     def js_vars(player: Player):
-        return dict(my_id=player.id_in_group)
+        return dict(my_id=player.id_in_group,
+                    time_limit=Constants.chat_time,
+                    start_time=player.participant.vars["chat_start_time"]
+                    )
+
+    @staticmethod
+    def vars_for_template(player: Player):
+
+        if "chat_start_time" not in player.participant.vars:
+            player.participant.vars["chat_start_time"] = time.time()
+
+        return dict(
+            vignette=load_vignette(player.session),
+            problematic=player.vignette_problematic,
+            discriminatory=player.vignette_discriminatory,
+            start_time=player.participant.vars["chat_start_time"],
+            my_id=player.id_in_group,
+        )
 
     @staticmethod
     def live_method(player: Player, data):
@@ -718,8 +810,11 @@ class ChatPage(Page):
                 text=censored_text,
             )
 
-            return {0: [to_dict(msg)]}
-        return {my_id: [to_dict(msg) for msg in Message.filter(group=group)]}
+            msg_dict = to_dict(msg)
+            msg_dict["sender_gender"] = player.gender
+            return {0: [msg_dict]}
+
+        return {my_id: [to_dict(m) | {"sender_gender": m.sender.gender} for m in Message.filter(group=group)]}
 
 # function to export chat data
 def custom_export(players):
@@ -758,11 +853,13 @@ def custom_export(players):
 # 3. remove this players and keep the other 3.
 
 class GroupPage(Page):
-
-
     @staticmethod
     def is_displayed(player):
-        return player.participant.vars.get("set_id") is None
+        participant = player.participant
+        return (
+                participant.vars.get("set_id") is None
+                and participant.vars.get("category") is not None
+        )
 
     @staticmethod
     def vars_for_template(player):
@@ -801,14 +898,34 @@ class Estimation(Page):
             })
 
         return dict(authors=authors,
-                    vignette = vignette_text)
+                    vignette = load_vignette(player.session))
 
+
+class UpdateOpinion(Page):
+    form_model = "player"
+    form_fields = ["update_discriminatory", "update_problematic"]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            vignette=load_vignette(player.session),
+            values={
+                "problematic": player.vignette_problematic,
+                "discriminatory": player.vignette_discriminatory,
+            },
+            condition="deliberation" if  player.participant.vars.get("set_id") is not None else "pseudo"
+        )
+
+    @staticmethod
+    def is_displayed(player):
+        return player.participant.vars.get("category") is not None
 
 page_sequence = [Demographics, Vignette, #Motivation,
                  ShuffleWaitPage,
+                 Instruction,
+                 ChatWaitPage,
                  ChatPage, GroupPage,
-
-                 #Estimation,
-
+                 UpdateOpinion,
+                 #EvaluateGroup
                  ]
 
