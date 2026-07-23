@@ -920,7 +920,7 @@ class UpdateOpinion(Page):
     def is_displayed(player):
         return player.participant.vars.get("category") is not None
 
-page_sequence = [Demographics, Vignette, #Motivation,
+page_sequence = [Demographics, Vignette, Motivation,
                  ShuffleWaitPage,
                  Instruction,
                  ChatWaitPage,
