@@ -55,3 +55,9 @@ class PlayerBot(Bot):
             check_html=False,
         )
 
+        yield Submission(
+            Instruction,
+            {},
+            check_html=False,
+        )
+

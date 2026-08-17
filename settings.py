@@ -6,8 +6,8 @@ SESSION_CONFIGS = [
         display_name='4 Player Deliberation Rooms (Pilot)',
         vignette='vignette1',
         #app_sequence=['experiment'],
-        app_sequence=['consent','experiment', 'survey', 'reward',],
-        num_demo_participants=60, # the number of participants that can enter the experiment
+        app_sequence=['consent','experiment','survey', 'reward',],
+        num_demo_participants=13, # the number of participants that can enter the experiment
         completionlink_pseudo = 'https://app.prolific.com/submissions/complete?cc=PSEUDO',
         completionlink_deliberation = 'https://app.prolific.com/submissions/complete?cc=DELIBERATION',
         completionlink_nocategory = 'https://app.prolific.com/submissions/complete?cc=NO_CATEGORY',
