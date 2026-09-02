@@ -2,18 +2,16 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='deliberation14',
+        name='deliberation',
         display_name='4 Player Deliberation Rooms (Pilot)',
         vignette='vignette1',
-        #app_sequence=['experiment'],
-        app_sequence=['consent','experiment','survey', 'reward',],
-        num_demo_participants=13, # the number of participants that can enter the experiment
-        completionlink_pseudo = 'https://app.prolific.com/submissions/complete?cc=PSEUDO',
-        completionlink_deliberation = 'https://app.prolific.com/submissions/complete?cc=DELIBERATION',
-        completionlink_nocategory = 'https://app.prolific.com/submissions/complete?cc=NO_CATEGORY',
+        app_sequence=['experiment','survey', 'reward',],
+        num_demo_participants=12, # the number of participants that can enter the experiment (adjust this based on the number of registered participants)
+        completionlink_pseudo = 'https://app.prolific.com/submissions/complete?cc=CR3HKI41',
+        completionlink_deliberation = 'https://app.prolific.com/submissions/complete?cc=C18K70L7',
+        completionlink_nocategory = 'https://app.prolific.com/submissions/complete?cc=C14567G7',
         use_browser_bots=False
     ),
-
 ]
 
 ROOMS = [

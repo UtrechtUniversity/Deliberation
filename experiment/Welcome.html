@@ -1,0 +1,173 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .info-card {
+        margin-bottom: 1.25rem;
+    }
+
+    .info-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .info-icon {
+        width: 38px;
+        text-align: center;
+        font-size: 1.25rem;
+    }
+
+    .payment-box {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .payment-amount {
+        font-weight: 700;
+        color: #0d6efd;
+    }
+
+    .small-note {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+    <i class="fas fa-handshake me-3 text-primary" style="font-size:1.6rem;"></i>
+    <div>
+        <h4 class="mb-0 fw-semibold">Welcome</h4>
+    </div>
+</div>
+
+
+<p class="mb-4">
+    Thank you for showing up on time and taking part in this study.
+  Before we begin, here is a brief study overview.
+    Please note that some tasks have a time limit
+</p>
+
+
+<div class="card shadow-sm info-card">
+    <div class="card-body">
+
+        <div class="d-flex mb-3">
+            <div class="info-icon me-3 text-primary">
+                <i class="fas fa-book-open"></i>
+            </div>
+
+            <div>
+                <strong>1. Reading task</strong>
+                <div class="text-muted small">
+                    You will read a short scenario and answer several questions about it.
+                </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex mb-3">
+            <div class="info-icon me-3 text-primary">
+                <i class="fas fa-pen"></i>
+            </div>
+
+            <div>
+                <strong>2. Writing task</strong>
+                <div class="text-muted small">
+                    You will briefly explain your answers in your own words.
+                </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex mb-3">
+            <div class="info-icon me-3 text-primary">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div>
+                <strong>3. Waiting and group formation</strong>
+                <div class="text-muted small">
+                    After completing the tasks, you may need to wait while
+                    the other participants finish and the groups are formed.
+                </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex">
+            <div class="info-icon me-3 text-primary">
+                <i class="fas fa-users"></i>
+            </div>
+
+            <div>
+                <strong>4. Group task</strong>
+                <div class="text-muted small">
+                    Once the groups have been formed, you will continue to the next
+                    part of the study. Some groups will be assigned an additional
+                    discussion task.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="payment-box mb-4">
+
+    <div class="d-flex align-items-start mb-3">
+        <i class="fas fa-pound-sign me-3 text-primary mt-1"></i>
+
+        <div>
+            <strong>Payment</strong>
+
+            <div class="mt-2">
+                You will receive
+                <span class="payment-amount">£3.00</span>
+                for completing the reading task, writing task, waiting phase,
+                and the remaining standard parts of the study.
+            </div>
+
+            <div class="mt-2">
+                Participants assigned to the additional
+                group discussion task will receive an additional
+                <span class="payment-amount">£1.50</span>.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="alert alert-light border small-note mb-4">
+    <i class="fas fa-info-circle text-primary me-2"></i>
+
+    In the unlikely event that we are unable to place you in a group,
+    you will not be able to complete the remaining parts of the study.
+    If you arrived on time but cannot participate further for this reason,
+    you will still receive <strong>£1.50</strong> for your time and effort.
+</div>
+
+
+<p class="text-muted small text-center">
+    Please click <strong>Next</strong> when you are ready to begin.
+</p>
+
+
+<div class="text-center mt-4">
+    {{ next_button }}
+</div>
+
+{% endblock %}

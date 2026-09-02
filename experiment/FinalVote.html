@@ -1,0 +1,177 @@
+{% extends "global/Page.html" %}
+
+{% block custom_styles %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .vote-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .decision-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+  }
+
+  .vote-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.8rem;
+    background: #fff;
+    border: 1px solid #d9dee5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease,
+                box-shadow 0.15s ease;
+  }
+
+  .vote-option:hover {
+    border-color: #86b7fe;
+    background: #f8fbff;
+  }
+
+  .vote-option:has(input:checked) {
+    border-color: #0d6efd;
+    background: #eef5ff;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.12);
+  }
+
+  .vote-option input {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .vote-option-title {
+    display: block;
+    font-weight: 700;
+    color: #212529;
+  }
+
+  .vote-option-text {
+    display: block;
+    margin-top: 0.15rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+    line-height: 1.35;
+  }
+
+  .privacy-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-top: 1.2rem;
+    color: #6c757d;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="vote-container">
+
+  <div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
+    <i class="fas fa-vote-yea me-3 text-primary" style="font-size:1.6rem;"></i>
+    <div>
+      <div class="text-muted small">Step 6</div>
+      <h4 class="mb-0 fw-semibold">Final committee vote</h4>
+    </div>
+  </div>
+
+  <p>
+    Finally, the committee must decide whether the hiring decision should be
+    formally investigated for possible discrimination. Please cast your
+    individual vote below.
+  </p>
+
+ <div class="decision-box">
+  <strong>Should the hiring decision be formally investigated?</strong>
+</div>
+
+  <label class="vote-option" for="vote_proceed">
+    <input
+      type="radio"
+      name="formal_review_vote"
+      id="vote_proceed"
+      value="proceed"
+      required
+    >
+    <span>
+      <span class="vote-option-title">
+        Yes, recommend a formal investigation
+      </span>
+      <span class="vote-option-text">
+        I recommend that the hiring decision be investigated further.
+      </span>
+  </label>
+
+  <label class="vote-option" for="vote_do_not_proceed">
+    <input
+      type="radio"
+      name="formal_review_vote"
+      id="vote_do_not_proceed"
+      value="do_not_proceed"
+      required
+    >
+    <span>
+      <span class="vote-option-title">
+        No, do not recommend a formal investigation
+      </span>
+      <span class="vote-option-text">
+        I do not recommend that the hiring decision be investigated further.
+      </span>
+  </label>
+
+  <div class="privacy-note">
+    <i class="fas fa-lock mt-1"></i>
+    <span>
+      Your vote is private. The other committee members will not see how you
+      voted.
+    </span>
+  </div>
+
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary otree-btn-next">
+      Submit my vote
+    </button>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const submitBtn = document.querySelector('button.otree-btn-next');
+
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function (event) {
+      const selectedVote = document.querySelector(
+        'input[name="formal_review_vote"]:checked'
+      );
+
+      if (!selectedVote) return;
+
+      const confirmed = confirm(
+        'Are you sure you want to submit your final vote?'
+      );
+
+      if (!confirmed) event.preventDefault();
+    });
+  }
+});
+</script>
+
+{% endblock %}

@@ -112,6 +112,12 @@ Type <b>@</b> to mention a player<br>You are Player {{ my_id }}
   </div>
 </div>
 
+<audio
+    id="ping-sound"
+    src="{% static 'sounds/ping.mp3' %}"
+    preload="auto"
+></audio>
+
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
@@ -802,5 +808,22 @@ const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
   }
 
   document.addEventListener("DOMContentLoaded", updateCounter);
+
+  document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const ping =
+                document.getElementById("ping-sound");
+
+            ping.volume = 0.7;
+
+            ping.play().catch(function (error) {
+                console.log(
+                    "Audio playback blocked:",
+                    error
+                );
+            });
+        }
+    );
 
 </script>

@@ -130,6 +130,13 @@
 
 </div>
 
+<audio
+    id="ping-sound"
+    src="{% static 'sounds/ping.mp3' %}"
+    preload="auto"
+></audio>
+
+
 {% endblock %}
 
 {% block scripts %}
@@ -162,6 +169,26 @@ let interval = setInterval(function () {
         document.querySelector("form").submit();
     }
 }, 1000);
+
+
+document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const ping =
+                document.getElementById("ping-sound");
+
+            ping.volume = 0.7;
+
+            ping.play().catch(function (error) {
+                console.log(
+                    "Audio playback blocked:",
+                    error
+                );
+            });
+        }
+    );
+
+
 </script>
 
 {% endblock %}

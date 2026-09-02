@@ -50,9 +50,9 @@ class Constants(BaseConstants):
     players_per_group = None
     num_rounds = 1
     demographics_timeout_seconds = 60
-    reading_timeout_seconds = 240
+    reading_timeout_seconds = 180
     writing_timeout_seconds = 300
-    chat_time = 1200
+    chat_time = 360
     max_chars = 500 # maximum number of characters for motivation
 
 
@@ -110,6 +110,14 @@ class Player(BasePlayer):
         label="To what extent do you think discrimination played a role in the hiring decision?"
     )
 
+    #field for vote
+    formal_review_vote = models.StringField(
+        choices=[
+            ['proceed', 'Yes, proceed to formal review'],
+            ['do_not_proceed', 'No, do not proceed to formal review'],
+        ]
+    )
+
     # argumentation in own words
     motivation = models.LongStringField(
         label=f"Please explain why you chose your answers (max {Constants.max_chars} characters)."
@@ -153,6 +161,13 @@ def timeout_time(player, timeout_seconds):
 
 #########################################################
 # PAGES
+
+class Welcome(Page):
+    @staticmethod
+    def get_timeout_seconds(player):
+        return timeout_time(player, 100)
+
+
 # participants first provide some background/demographic information
 class Demographics(Page):
     form_model = 'player'
@@ -611,7 +626,18 @@ class ShuffleWaitPage(WaitPage):
 
         leftovers = [
             p for p in players
-            if p.participant.vars.get("set_id") is None
+            if (
+                p.participant.vars.get("set_id") is None
+                and get_category(p) is not None
+            )
+        ]
+
+        # If no complete A-B-C set could be created, real_groups is empty.
+        # In that case, pseudo participants cannot be matched to a real group,
+        # so use three other eligible participants as a fallback source.
+        fallback_candidates = [
+            p for p in players
+            if get_category(p) is not None
         ]
 
         for ego in leftovers:
@@ -620,6 +646,38 @@ class ShuffleWaitPage(WaitPage):
             ego_score = get_score(ego)
 
             print(f"\nEGO {ego.id_in_subsession} | {ego_cat} | {ego_score}")
+
+            if not real_groups:
+                candidates = [p for p in fallback_candidates if p != ego]
+
+                if len(candidates) < 3:
+                    print(
+                        "  → skipped: fewer than 3 other eligible "
+                        "participants available"
+                    )
+                    continue
+
+                # No matched real group exists, so use a neutral random
+                # fallback rather than imposing an additional matching rule.
+                pseudo_group = random.sample(candidates, 3)
+
+                print("  FALLBACK PSEUDO GROUP (no complete sets):")
+                print([p.id_in_subsession for p in pseudo_group])
+
+                ego.participant.vars["pseudo_group"] = [
+                    {
+                        "id": m.id_in_subsession,
+                        "gender": m.gender,
+                        "score": get_score(m),
+                        "motivation": m.field_maybe_none("motivation"),
+                        "category": get_category(m),
+                    }
+                    for m in pseudo_group
+                ]
+
+                ego.participant.vars["pseudo_type"] = "FALLBACK"
+                ego.participant.vars["pseudo_distance"] = None
+                continue
 
             valid_types = set()
 
@@ -920,12 +978,35 @@ class UpdateOpinion(Page):
     def is_displayed(player):
         return player.participant.vars.get("category") is not None
 
-page_sequence = [Demographics, Vignette, Motivation,
+
+class FinalVote(Page):
+    form_model = 'player'
+    form_fields = ['formal_review_vote']
+
+    @staticmethod
+    def is_displayed(player):
+        return player.participant.vars.get("category") is not None
+
+
+page_sequence = [Welcome,
+                 Demographics, Vignette, Motivation,
                  ShuffleWaitPage,
                  Instruction,
                  ChatWaitPage,
                  ChatPage, GroupPage,
                  UpdateOpinion,
+                 FinalVote,
+                 #EvaluateGroup
+                 ]
+
+page_sequence = [Welcome,
+                 Demographics, Vignette, Motivation,
+                 ShuffleWaitPage,
+                 Instruction,
+                 ChatWaitPage,
+                 ChatPage, GroupPage,
+                 UpdateOpinion,
+                 FinalVote,
                  #EvaluateGroup
                  ]
 
