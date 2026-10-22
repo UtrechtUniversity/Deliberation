@@ -358,6 +358,17 @@ Type <b>@</b> to mention a player<br>You are Player {{ my_id }}
   100% { opacity: 1; }
 }
 
+.chat-entry-notices {
+  margin-bottom: 1rem;
+}
+
+.chat-entry-notice {
+  color: #6c757d;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-bottom: 0.3rem;
+}
+
 </style>
 
 <script>
@@ -627,10 +638,29 @@ const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
     );
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    liveSend({});
-    updateTimerUI();
-  });
+  function showEntryNotices() {
+  // Prevent duplicate notices within the current page.
+  if (document.getElementById("chat-entry-notices")) return;
+
+  const notices = document.createElement("div");
+  notices.id = "chat-entry-notices";
+  notices.className = "chat-entry-notices";
+
+  for (const text of js_vars.entry_messages || []) {
+    const notice = document.createElement("div");
+    notice.className = "chat-entry-notice";
+    notice.textContent = text;
+    notices.appendChild(notice);
+  }
+
+  chat_messages.prepend(notices);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  showEntryNotices();
+  liveSend({});
+  updateTimerUI();
+});
 
   function toggleFullScreen() {
     const el = document.documentElement;
@@ -652,10 +682,6 @@ const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
   function overlayClick() {
     toggleInstructions();
   }
-
-  // =========================
-  // MENTIONS (unchanged)
-  // =========================
 
   function showMentionDropdown(query = "") {
     mentionDropdown.innerHTML = "";

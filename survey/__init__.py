@@ -59,7 +59,7 @@ class Survey(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.participant.vars.get("category") is not None
+        return player.participant.vars.get("in_discussion", False)
 
 
 page_sequence = [Survey]
