@@ -123,15 +123,15 @@ class Player(BasePlayer):
         ),
     )
 
-    vignette_imagine = models.IntegerField(
-        choices=scale_choices,
-        widget=widgets.RadioSelect,
-        label=(
-            "To what extent do you think the other committee "
-            "members will believe that discrimination played "
-            "a role in the hiring decision?"
-        ),
-    )
+    #vignette_imagine = models.IntegerField(
+    #    choices=scale_choices,
+    #    widget=widgets.RadioSelect,
+    #    label=(
+    #        "To what extent do you think the other committee "
+    #        "members will believe that discrimination played "
+    #        "a role in the hiring decision?"
+    #    ),
+    #)
 
     # Updated assessment after discussion
     update_problematic = models.IntegerField(
@@ -231,7 +231,7 @@ class Vignette(Page):
     form_fields = [
         'vignette_problematic',
         'vignette_discriminatory',
-        'vignette_imagine',
+        #'vignette_imagine',
     ]
 
     @staticmethod
@@ -478,8 +478,9 @@ class ShuffleWaitPage(WaitPage):
         players = player.subsession.get_players()
 
         total_needed = (
-            player.session.config.get("num_demo_participants")
-            or len(players)
+            #player.session.config.get("num_demo_participants")
+            #or len(players)
+            len(players)
         )
 
         total_arrived = sum(
@@ -494,7 +495,7 @@ class ShuffleWaitPage(WaitPage):
         )
 
         return dict(
-            percent=min(int(percent), 99),
+            percent=max(1, min(int(percent), 99)),
             category=get_category(player),
         )
 
@@ -794,7 +795,7 @@ class ChatWaitPage(WaitPage):
     title_text = "Preparing discussion"
 
     body_text = (
-        "Please wait while the committee members get ready.<br>"
+        "Please wait while your group members get ready.<br>"
         "The discussion will begin automatically once everyone "
         "is ready."
     )
@@ -971,14 +972,14 @@ class FinalVote(Page):
 # =========================================================
 
 page_sequence = [
-    #Welcome,
+    Welcome,
     Demographics,
     Vignette,
-    #Motivation,
+    Motivation,
     ShuffleWaitPage,
     Instruction,
     ChatWaitPage,
     ChatPage,
     UpdateOpinion,
-    FinalVote,
+    #FinalVote,
 ]

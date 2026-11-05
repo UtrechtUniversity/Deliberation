@@ -49,15 +49,15 @@ class PlayerBot(Bot):
             for _ in range(N_MOTIVATION_TOKENS)
         )
 
-        yield Submission(
-            Motivation,
-            dict(motivation=motivation),
-            check_html=False,
-        )
+        #yield Submission(
+        #    Motivation,
+        #    dict(motivation=motivation),
+        #    check_html=False,
+        #)
 
         yield Submission(
             Instruction,
-            {},
+            dict(waiver_accepted=True),
             check_html=False,
         )
 

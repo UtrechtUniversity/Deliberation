@@ -32,24 +32,25 @@
 {% block content %}
 
 <div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
-  <i class="fas fa-pen-nib me-3 text-primary" style="font-size:1.6rem;"></i>
+  <i class="fas fas fa-pen me-3 text-primary" style="font-size:1.6rem;"></i>
   <div>
     <div class="text-muted small">Step 3</div>
-    <h4 class="mb-0 fw-semibold">Explain your evaluation</h4>
+    <h4 class="mb-0 fw-semibold">Writing task</h4>
   </div>
 </div>
 
+<!--
 <p>
   Before the committee's first meeting, each committee member is asked to prepare a brief explanation of their preliminary assessment. These notes will help structure the upcoming discussion.
 </p>
+-->
 
 <p>
-  You indicated that discrimination played a role in the hiring decision to an extent of
-  {{ values.discriminatory }} on a scale from -10 (Not at all) to 10 (Very much).
-  Please explain in your own words why you gave this assessment.
+  We asked you to whether you think discrimination played a role in the appointment decision below,
+  on a scale from −10 (<i>Definitely no</i>) to 10 (<i>Definitely yes</i>).
 </p>
 
-  <div class="card-body">
+<div class="card-body">
     <div class="mb-2">
     </div>
     <div class="vignette-box">
@@ -57,12 +58,16 @@
     </div>
   </div>
 
+<p>
+  Your answer was: <strong>{{ values.discriminatory }}</strong>.
+  Please explain in your own words why you gave this assessment.
+</p>
+
+
 <div class="card mb-4 shadow-sm">
   <div class="card-body">
 
-    <label class="form-label mb-3 d-block bg-light p-2 rounded">
-      <strong>Reasoning</strong>
-    </label>
+
 
     {{ form.motivation }}
 

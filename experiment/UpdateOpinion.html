@@ -50,7 +50,7 @@
 <p>
   After having
   {% if condition == "deliberation" %}
-    discussed with the committee members,
+    discussed with your group,
   {% else %}
     seen the other committee members’ positions and arguments,
   {% endif %} you may update your evaluation of the scenario below using the sliders.
@@ -64,12 +64,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think the hiring decision is problematic?</strong>
+     <strong>Do you think the appointment decision is problematic?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not at all)</span>
+      <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
@@ -87,7 +87,7 @@
         {{ values.problematic }}
       </span>
 
-      <span class="scale-label text-end">10 (Very much)</span>
+      <span class="scale-label text-end">10 (Definitely Yes)</span>
 
     </div>
 
@@ -98,12 +98,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think discrimination played a role in the hiring decision?</strong>
+      <strong>Do you think discrimination played a role in the appointment decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not at all)</span>
+      <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
@@ -121,7 +121,8 @@
         {{ values.discriminatory }}
       </span>
 
-      <span class="scale-label text-end">10 (Very much)</span>
+      <span class="scale-label text-end">10 (Definitely Yes)</span>
+
 
     </div>
 

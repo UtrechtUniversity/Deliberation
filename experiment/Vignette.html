@@ -40,25 +40,29 @@
 {% block content %}
 
 <div class="d-flex align-items-center mb-4 p-3 rounded bg-light border">
-  <i class="fas fa-briefcase me-3 text-primary" style="font-size:1.6rem;"></i>
+  <i class="fas fa-book-open me-3 text-primary" style="font-size:1.6rem;"></i>
   <div>
     <div class="text-muted small">Step 2</div>
-    <h4 class="mb-0 fw-semibold">Evaluate a situation</h4>
+    <h4 class="mb-0 fw-semibold">Reading task</h4>
   </div>
 </div>
 
-<p> Imagine that you work for a company.
-    A recent hiring decision has been made, and you have been asked to serve on an internal committee that will review that decision.
-    At this stage, the committee has only the information provided below.
-</p>
+<p>Please read the following scenario carefully.</p>
 
 <div class="vignette-box">
   {{ vignette }}
 </div>
 
+<!--
 <p>
     Before meeting with the other committee members, each member is asked to provide an independent preliminary assessment based solely on the information currently available.
     Please indicate your evaluation of the situation using the sliders below.
+</p>
+-->
+
+<p>
+  People may interpret such appointment decisions in different ways. Some people may view the situation as problematic, while others may not.
+  Please indicate your personal evaluation of the situation using the sliders below where −10 means <i>Definitely no</i> and 10 means <i>Definitely yes</i>.
 </p>
 
 <!-- Problematic question -->
@@ -66,12 +70,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think the hiring decision is problematic?</strong>
+      <strong>Do you think the appointment decision is problematic?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not at all)</span>
+      <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
@@ -87,7 +91,7 @@
 
       <span class="badge bg-secondary" id="val_problematic">0</span>
 
-      <span class="scale-label text-end">10 (Very much)</span>
+      <span class="scale-label text-end">10 (Definitely Yes)</span>
 
     </div>
 
@@ -99,12 +103,12 @@
   <div class="card-body">
 
     <label class="form-label d-block bg-light rounded statement-label">
-      <strong>To what extent do you think discrimination played a role in the hiring decision?</strong>
+      <strong>Do you think discrimination played a role in the appointment decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
 
-      <span class="scale-label">-10 (Not at all)</span>
+      <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
@@ -120,15 +124,14 @@
 
       <span class="badge bg-secondary" id="val_discriminatory">0</span>
 
-      <span class="scale-label text-end">10 (Very much)</span>
+      <span class="scale-label text-end">10 (Definitely Yes)</span>
 
     </div>
 
   </div>
 </div>
 
-
-<!-- Imagine question -->
+<!--
 <div class="card shadow-sm statement-card">
   <div class="card-body">
 
@@ -158,6 +161,7 @@
 
   </div>
 </div>
+-->
 
 
 <div class="text-center mt-4">

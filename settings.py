@@ -6,7 +6,7 @@ SESSION_CONFIGS = [
         display_name='4 Player Deliberation Rooms (Pilot)',
         vignette='vignette1',
         #app_sequence=['experiment','survey', 'reward',],
-        app_sequence=['experiment', 'reward',],
+        app_sequence=['experiment', 'reward'],
         num_demo_participants=4, # the number of participants that can enter the experiment (adjust this based on the number of registered participants)
         completionlink_pseudo = 'https://app.prolific.com/submissions/complete?cc=CR3HKI41',
         completionlink_deliberation = 'https://app.prolific.com/submissions/complete?cc=C18K70L7',
@@ -17,11 +17,12 @@ SESSION_CONFIGS = [
 
 ROOMS = [
     dict(
-        name='test',
-        display_name='Deliberation Room',
+        name=f'test_{number}',
+        display_name=f'Deliberation Room {number}',
         # participant_label_file='_rooms/fashion_dilemma.txt',
         # use_secure_urls=True,
-    ),
+    )
+    for number in range(1, 11)
 ]
 
 SESSION_CONFIG_DEFAULTS = dict(
