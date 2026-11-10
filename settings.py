@@ -32,7 +32,8 @@ SESSION_CONFIG_DEFAULTS = dict(
 # set some central parameters to be used across apps:
 GROUP_SIZE = 4 # the number of people per discussion group
 
-PARTICIPANT_FIELDS = ["group_id"]
+PARTICIPANT_FIELDS = ["group_id", "set_id", "group_type", "group_order", "in_discussion"]
+
 LANGUAGE_CODE = 'en'
 REAL_WORLD_CURRENCY_CODE = 'EUR'
 USE_POINTS = True
