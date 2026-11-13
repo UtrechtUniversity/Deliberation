@@ -76,7 +76,7 @@ class Constants(BaseConstants):
     reading_timeout_seconds = 180
     writing_timeout_seconds = 300
 
-    chat_time = 360
+    chat_time = 300
     max_chars = 750
 
 
@@ -177,6 +177,10 @@ class Player(BasePlayer):
         initial=False,
     )
 
+    prolific_id = models.StringField(default=str(" "))
+
+
+
 
 # =========================================================
 # TIMEOUT HELPERS
@@ -201,6 +205,10 @@ def timeout_time(player, timeout_seconds):
 # =========================================================
 
 class Welcome(Page):
+
+    @staticmethod
+    def before_next_page(self, timeout_happened):
+        self.prolific_id = self.participant.label
 
     @staticmethod
     def get_timeout_seconds(player):

@@ -45,6 +45,9 @@
              class="chat-card flex-grow-1"
              role="log"
              aria-live="polite">
+          <div id="completionMsg" class="chat-entry-notice mt-3 d-none">
+            You completed the discussion task! Thanks for your participation. You may continue by clicking Next.
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +68,7 @@
         <div id="mentionDropdown" class="mention-dropdown d-none"></div>
 
         <div class="text-muted small mb-2">
-Type <b>@</b> to mention a player<br>You are Player {{ my_id }}
+          Type <b>@</b> to mention a player<br><strong>You are Player {{ my_id }}</strong>
 </div>
 
         <button type="button"
@@ -73,10 +76,6 @@ Type <b>@</b> to mention a player<br>You are Player {{ my_id }}
                 onclick="sendMsg()">
           <i class="fas fa-paper-plane"></i> Send (Enter)
         </button>
-
-        <div id="completionMsg" class="alert alert-success small mt-3 d-none">
-  You completed the discussion task!
-</div>
 
         <button type="button"
         id="nextBtn"
@@ -412,12 +411,9 @@ function formatTime(s) {
   return `${m}:${sec.toString().padStart(2, '0')}`;
 }
 
-function showCompletionUI() {
-  if (completionMsg) completionMsg.classList.remove("d-none");
-  if (nextBtn) nextBtn.classList.remove("d-none");
-}
-
 function updateTimerUI() {
+  if (chatDisabled) return;
+
   const remaining = getRemainingSeconds();
 
   timerDisplay.textContent = `⏳ Time left: ${formatTime(remaining)}`;
@@ -437,48 +433,30 @@ function updateTimerUI() {
     timerDisplay.classList.add("timer-flash");
   }
 
-  // =========================
-  // ONLY END STATE (0 seconds)
-  // =========================
-  if (remaining <= 0) {
-    timerDisplay.textContent = "⏰ Time is up";
-    timerDisplay.style.color = "red";
-
-    chatDisabled = true;
-    chat_input.disabled = true;
-
-    if (sendBtn) sendBtn.disabled = true;
-
-    if (nextBtn) nextBtn.classList.remove("d-none");
-
-    if (completionMsg) completionMsg.classList.remove("d-none");
-
-    clearInterval(timerInterval);
-  }
+  if (remaining <= 0) endChat();
 }
 
 function endChat() {
-  chatDisabled = true;
+  if (chatDisabled) return;
 
+  chatDisabled = true;
   chat_input.disabled = true;
   if (sendBtn) sendBtn.disabled = true;
-
   hideMentionDropdown();
-
-  if (nextBtn) nextBtn.classList.remove("d-none");
 
   timerDisplay.textContent = "⏰ Time is up";
   timerDisplay.style.color = "red";
+  timerDisplay.classList.remove("timer-flash");
+  clearInterval(timerInterval);
 
-  chatDisabled = true;
-chat_input.disabled = true;
-
-if (sendBtn) sendBtn.disabled = true;
-if (nextBtn) nextBtn.classList.remove("d-none");
+  if (nextBtn) nextBtn.classList.remove("d-none");
+  completionMsg.classList.remove("d-none");
+  chat_messages.scrollTop = chat_messages.scrollHeight;
 }
 
 // run every second
-const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
+const timerInterval = setInterval(updateTimerUI, 1000);
+updateTimerUI();
 
   function goNext() {
   const form = document.querySelector("form");
@@ -573,7 +551,8 @@ const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
       requestAnimationFrame(() => {
         msgDiv.style.opacity = 1;
         msgDiv.style.transform = 'translateY(0)';
-        msgDiv.scrollIntoView({behavior: 'smooth', block: 'end'});
+        const scrollTarget = chatDisabled ? completionMsg : msgDiv;
+        scrollTarget.scrollIntoView({behavior: 'smooth', block: 'end'});
       });
     }, delay);
   }
@@ -626,7 +605,7 @@ const timerInterval = setInterval(updateTimerUI, 1000);updateTimerUI();
         ${timeHTML}
       `;
 
-      chat_messages.appendChild(msgDiv);
+      chat_messages.insertBefore(msgDiv, completionMsg);
       fadeInMessage(msgDiv, delay);
 
       delay += 80;

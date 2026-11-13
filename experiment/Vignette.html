@@ -33,9 +33,16 @@
     border-radius: 6px;
     margin-bottom: 1.5rem;
   }
+
+  .form-range.slider-pending::-webkit-slider-thumb {
+    background-color: #6c757d;
+  }
+
+  .form-range.slider-pending::-moz-range-thumb {
+    background-color: #6c757d;
+  }
 </style>
 {% endblock %}
-
 
 {% block content %}
 
@@ -55,8 +62,8 @@
 
 <!--
 <p>
-    Before meeting with the other committee members, each member is asked to provide an independent preliminary assessment based solely on the information currently available.
-    Please indicate your evaluation of the situation using the sliders below.
+  Before meeting with the other committee members, each member is asked to provide an independent preliminary assessment based solely on the information currently available.
+  Please indicate your evaluation of the situation using the sliders below.
 </p>
 -->
 
@@ -68,18 +75,16 @@
 <!-- Problematic question -->
 <div class="card shadow-sm statement-card">
   <div class="card-body">
-
-    <label class="form-label d-block bg-light rounded statement-label">
+    <label class="form-label d-block bg-light rounded statement-label" for="id_vignette_problematic">
       <strong>Do you think the appointment decision is problematic?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
-
       <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
-        class="form-range flex-grow-1"
+        class="form-range flex-grow-1 slider-pending"
         name="vignette_problematic"
         id="id_vignette_problematic"
         min="-10"
@@ -92,27 +97,23 @@
       <span class="badge bg-secondary" id="val_problematic">0</span>
 
       <span class="scale-label text-end">10 (Definitely Yes)</span>
-
     </div>
-
   </div>
 </div>
 
 <!-- Discriminatory question -->
 <div class="card shadow-sm statement-card">
   <div class="card-body">
-
-    <label class="form-label d-block bg-light rounded statement-label">
+    <label class="form-label d-block bg-light rounded statement-label" for="id_vignette_discriminatory">
       <strong>Do you think discrimination played a role in the appointment decision?</strong>
     </label>
 
     <div class="d-flex align-items-center gap-3">
-
       <span class="scale-label">−10 (Definitely No)</span>
 
       <input
         type="range"
-        class="form-range flex-grow-1"
+        class="form-range flex-grow-1 slider-pending"
         name="vignette_discriminatory"
         id="id_vignette_discriminatory"
         min="-10"
@@ -125,16 +126,13 @@
       <span class="badge bg-secondary" id="val_discriminatory">0</span>
 
       <span class="scale-label text-end">10 (Definitely Yes)</span>
-
     </div>
-
   </div>
 </div>
 
 <!--
 <div class="card shadow-sm statement-card">
   <div class="card-body">
-
     <label class="form-label d-block bg-light rounded statement-label">
       <strong>To what extent do you think the other committee members will believe that discrimination played a role in the hiring decision?</strong>
     </label>
@@ -158,30 +156,59 @@
 
       <span class="scale-label text-end">10 (Very much)</span>
     </div>
-
   </div>
 </div>
 -->
-
 
 <div class="text-center mt-4">
   {{ next_button }}
 </div>
 
-
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const nextBtn = document.querySelector('button.otree-btn-next');
+document.addEventListener('DOMContentLoaded', function () {
+  const sliders = [
+    document.getElementById('id_vignette_problematic'),
+    document.getElementById('id_vignette_discriminatory'),
+  ];
+  const form = sliders[0].form;
 
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function (event) {
-        const confirmed = confirm('Are you sure you want to submit your answers?');
-        if (!confirmed) {
-          event.preventDefault();
-        }
-      });
+  sliders.forEach(function (slider) {
+    function activate() {
+      slider.classList.remove('slider-pending');
+      slider.setCustomValidity('');
     }
+
+    slider.addEventListener('click', activate);
+    slider.addEventListener('input', activate);
+
+    // Let keyboard users select 0 without moving the thumb.
+    slider.addEventListener('keydown', function (event) {
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        activate();
+      }
+    });
   });
+
+  form.addEventListener('submit', function (event) {
+    const untouched = sliders.find(function (slider) {
+      return slider.classList.contains('slider-pending');
+    });
+
+    if (untouched) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      untouched.setCustomValidity('Click or move this slider before continuing.');
+      untouched.reportValidity();
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to submit your answers?')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+});
 </script>
 
 {% endblock %}
